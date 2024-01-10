@@ -5,7 +5,7 @@ import json
 import pytest
 
 from crewai.agent import Agent
-from crewai.agents import CacheHandler
+from crewai.agents.cache import CacheHandler
 from crewai.crew import Crew
 from crewai.process import Process
 from crewai.task import Task
@@ -180,11 +180,11 @@ def test_crew_verbose_output(capsys):
     captured = capsys.readouterr()
     expected_strings = [
         "Working Agent: Researcher",
-        "Starting Task: Research AI advancements. ...",
-        "Task output:",
+        "Starting Task: Research AI advancements.",
+        "[Researcher] Task output:",
         "Working Agent: Senior Writer",
-        "Starting Task: Write about AI in healthcare. ...",
-        "Task output:",
+        "Starting Task: Write about AI in healthcare.",
+        "[Senior Writer] Task output:",
     ]
 
     for expected_string in expected_strings:
@@ -205,7 +205,7 @@ def test_crew_verbose_levels_output(capsys):
 
     crew.kickoff()
     captured = capsys.readouterr()
-    expected_strings = ["Working Agent: Researcher", "Task output:"]
+    expected_strings = ["Working Agent: Researcher", "[Researcher] Task output:"]
 
     for expected_string in expected_strings:
         assert expected_string in captured.out
@@ -216,8 +216,8 @@ def test_crew_verbose_levels_output(capsys):
     captured = capsys.readouterr()
     expected_strings = [
         "Working Agent: Researcher",
-        "Starting Task: Write about AI advancements. ...",
-        "Task output:",
+        "Starting Task: Write about AI advancements.",
+        "[Researcher] Task output:",
     ]
 
     for expected_string in expected_strings:
@@ -241,12 +241,12 @@ def test_cache_hitting_between_agents():
 
     tasks = [
         Task(
-            description="What is 2 tims 6?",
+            description="What is 2 tims 6? Return only the number.",
             tools=[multiplier],
             agent=ceo,
         ),
         Task(
-            description="What is 2 times 6?",
+            description="What is 2 times 6? Return only the number.",
             tools=[multiplier],
             agent=researcher,
         ),
